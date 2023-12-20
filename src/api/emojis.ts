@@ -2,7 +2,6 @@
 import puppeteer from "puppeteer";
 import { parseCsvFile } from "../utils/helpers/CsvToJson";
 import * as path from "path";
-import * as readline from "readline";
 import express from "express";
 
 const router = express.Router();
@@ -64,7 +63,7 @@ router.get<{}, EmojiResponse>("/", async (req, res) => {
   }
 
   (async () => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: true });
 
     try {
       await scrapeWebsite(browser);
