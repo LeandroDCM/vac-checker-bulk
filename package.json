@@ -3,6 +3,9 @@
   "version": "1.2.0",
   "description": " A basic starter for an express.js API with Typescript",
   "main": "src/index.ts",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "nodemon src/index.ts",
