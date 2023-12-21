@@ -10,21 +10,21 @@ type EmojiResponse = unknown;
 
 router.get<{}, EmojiResponse>("/", async (req, res) => {
   // try {
-  //   interface User {
-  //     link: string;
-  //     name: string;
-  //   }
+  interface User {
+    link: string;
+    name: string;
+  }
 
-  //   let result: string[] = [];
+  let result: string[] = [];
 
-  //   async function fileToJson(): Promise<User[]> {
-  //     const filePath = path.join(__dirname, "users.txt");
-  //     const usersJson = await parseCsvFile(filePath);
-  //     return usersJson;
-  //   }
+  async function fileToJson(): Promise<User[]> {
+    const filePath = path.join(__dirname, "users.txt");
+    const usersJson = await parseCsvFile(filePath);
+    return usersJson;
+  }
 
-  //   const targetDivClass = "profile_ban_status";
-  //   const backupNameDivClass = "actual_persona_name";
+  const targetDivClass = "profile_ban_status";
+  const backupNameDivClass = "actual_persona_name";
 
   //   async function scrapeWebsite(browser: any): Promise<void> {
   //     const users = await fileToJson();
