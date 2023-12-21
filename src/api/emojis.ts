@@ -29,40 +29,40 @@ router.get<{}, EmojiResponse>("/", async (req, res) => {
     async function scrapeWebsite(browser: any): Promise<void> {
       const users = await fileToJson();
 
-      // const userPromises = users.map(async (user) => {
-      //   const page = await browser.newPage();
-      //   let divContent: string = "";
-      //   let backupName: string = "";
+      const userPromises = users.map(async (user) => {
+        const page = await browser.newPage();
+        let divContent: string = "";
+        let backupName: string = "";
 
-      //   try {
-      //     await page.goto(user.link, {
-      //       timeout: 10000,
-      //       waitUntil: "domcontentloaded",
-      //     });
-      //     await page.waitForSelector(`.${targetDivClass}`, { timeout: 1000 }); // Adjust timeout as needed
-      //     divContent = await page.$eval(
-      //       `.${targetDivClass}`,
-      //       (div: any) => div?.textContent || ""
-      //     );
-      //     await page.waitForSelector(`.${backupNameDivClass}`, {
-      //       timeout: 1000,
-      //     }); // Adjust timeout as needed
-      //     backupName = await page.$eval(
-      //       `.${backupNameDivClass}`,
-      //       (div: any) => div?.textContent || ""
-      //     );
-      //   } catch (error) {
-      //     divContent = "Tzl não está banido";
-      //   } finally {
-      //     await page.close();
-      //   }
+        // try {
+        //   await page.goto(user.link, {
+        //     timeout: 10000,
+        //     waitUntil: "domcontentloaded",
+        //   });
+        //   await page.waitForSelector(`.${targetDivClass}`, { timeout: 1000 }); // Adjust timeout as needed
+        //   divContent = await page.$eval(
+        //     `.${targetDivClass}`,
+        //     (div: any) => div?.textContent || ""
+        //   );
+        //   await page.waitForSelector(`.${backupNameDivClass}`, {
+        //     timeout: 1000,
+        //   }); // Adjust timeout as needed
+        //   backupName = await page.$eval(
+        //     `.${backupNameDivClass}`,
+        //     (div: any) => div?.textContent || ""
+        //   );
+        // } catch (error) {
+        //   divContent = "Tzl não está banido";
+        // } finally {
+        //   await page.close();
+        // }
 
-      //   if (!user.name) user.name = backupName;
-      //   console.log(`Retardado: ${user.name}:`, divContent);
-      //   result.push(`Retardado: ${user.name}:, ${divContent}`);
-      // });
+        // if (!user.name) user.name = backupName;
+        // console.log(`Retardado: ${user.name}:`, divContent);
+        result.push(`Retardado: ${user.name}:, ${user.name}`);
+      });
 
-      // await Promise.all(userPromises);
+      await Promise.all(userPromises);
     }
 
     (async () => {
@@ -78,7 +78,6 @@ router.get<{}, EmojiResponse>("/", async (req, res) => {
     console.log(error);
     res.status(500).json({ error: `${error}` });
   }
-  res.json(["inehoff"]);
 });
 
 export default router;
