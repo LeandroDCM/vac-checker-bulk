@@ -1,8 +1,8 @@
-/// <reference types="puppeteer" />
-import puppeteer from "puppeteer";
-import { parseCsvFile } from "../utils/helpers/CsvToJson";
+import axios from "axios";
+import * as cheerio from "cheerio";
 import * as path from "path";
 import express from "express";
+import { parseCsvFile } from "../utils/helpers/CsvToJson";
 
 const router = express.Router();
 
@@ -26,59 +26,40 @@ router.get<{}, EmojiResponse>("/", async (req, res) => {
     const targetDivClass = "profile_ban_status";
     const backupNameDivClass = "actual_persona_name";
 
-    async function scrapeWebsite(browser: any): Promise<void> {
-      const users = await fileToJson();
+    async function scrapeWebsite(user: User): Promise<void> {
+      try {
+        const response = await axios.get(user.link);
+        const $ = cheerio.load(response.data);
 
-      const userPromises = users.map(async (user) => {
-        const page = await browser.newPage();
-        let divContent: string = "";
-        let backupName: string = "";
+        // Adjust the selector based on the structure of the target website
+        let divContent = $(`.${targetDivClass}`).text();
+        let divContentName = $(`.${backupNameDivClass}`).text();
 
-        // try {
-        //   await page.goto(user.link, {
-        //     timeout: 10000,
-        //     waitUntil: "domcontentloaded",
-        //   });
-        //   await page.waitForSelector(`.${targetDivClass}`, { timeout: 1000 }); // Adjust timeout as needed
-        //   divContent = await page.$eval(
-        //     `.${targetDivClass}`,
-        //     (div: any) => div?.textContent || ""
-        //   );
-        //   await page.waitForSelector(`.${backupNameDivClass}`, {
-        //     timeout: 1000,
-        //   }); // Adjust timeout as needed
-        //   backupName = await page.$eval(
-        //     `.${backupNameDivClass}`,
-        //     (div: any) => div?.textContent || ""
-        //   );
-        // } catch (error) {
-        //   divContent = "Tzl não está banido";
-        // } finally {
-        //   await page.close();
-        // }
+        if (!user.name) user.name = divContentName;
 
-        // if (!user.name) user.name = backupName;
-        // console.log(`Retardado: ${user.name}:`, divContent);
-        result.push(`Retardado: ${user.name}:, ${user.name}`);
-      });
+        if (!divContent) divContent = "Livre";
+        else {
+          divContent = "VAC";
+        }
 
-      await Promise.all(userPromises);
+        console.log(`Retardado: ${user.name}:`, divContent);
+        result.push(`Retardado: ${user.name}: ${divContent}`);
+      } catch (error: any) {
+        console.error(`Error scraping ${user.name}'s page:`, error.message);
+        // Handle the error as needed
+      }
     }
 
-    (async () => {
-      const browser = await puppeteer.launch({ headless: true });
-      try {
-        await scrapeWebsite(browser);
-      } finally {
-        await browser.close();
-        res.json(result);
-      }
-    })();
+    const users = await fileToJson();
+    const scrapePromises = users.map(scrapeWebsite);
+
+    await Promise.all(scrapePromises);
+
+    res.json(result);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: `${error}` });
   }
-  res.json(["inehoff"]);
 });
 
 export default router;
