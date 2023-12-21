@@ -78,6 +78,7 @@ router.get<{}, EmojiResponse>("/", async (req, res) => {
     console.log(error);
     res.status(500).json({ error: `${error}` });
   }
+  res.json(["inehoff"]);
 });
 
 export default router;
